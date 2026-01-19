@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface Sparkle {
   id: number;
@@ -22,19 +22,31 @@ interface ConfettiPiece {
 
 const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe', '#ffffff'];
 
-export default function PartyPoppers({ onComplete }: { onComplete?: () => void }) {
+export default function PartyPoppers({ 
+  onComplete, 
+  trigger,
+  intensity = 'normal' 
+}: { 
+  onComplete?: () => void;
+  trigger?: number;
+  intensity?: 'normal' | 'high';
+}) {
   const [leftSparkles, setLeftSparkles] = useState<Sparkle[]>([]);
   const [rightSparkles, setRightSparkles] = useState<Sparkle[]>([]);
   const [leftConfetti, setLeftConfetti] = useState<ConfettiPiece[]>([]);
   const [rightConfetti, setRightConfetti] = useState<ConfettiPiece[]>([]);
   const [isActive, setIsActive] = useState(true);
 
-  useEffect(() => {
+  const createBlast = useCallback(() => {
+    // Enhanced sparkles - MORE for high intensity
+    const sparkleCount = intensity === 'high' ? 80 : 30;
+    const confettiCount = intensity === 'high' ? 150 : 50;
+    
     // Create sparkles for left popper
     const leftS: Sparkle[] = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < sparkleCount; i++) {
       leftS.push({
-        id: i,
+        id: Date.now() + i,
         x: 10 + Math.random() * 20, // Left side of screen
         y: 40 + Math.random() * 20,
         delay: Math.random() * 0.3,
@@ -45,9 +57,9 @@ export default function PartyPoppers({ onComplete }: { onComplete?: () => void }
 
     // Create sparkles for right popper
     const rightS: Sparkle[] = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < sparkleCount; i++) {
       rightS.push({
-        id: i,
+        id: Date.now() + 10000 + i,
         x: 70 + Math.random() * 20, // Right side of screen
         y: 40 + Math.random() * 20,
         delay: Math.random() * 0.3,
@@ -56,11 +68,11 @@ export default function PartyPoppers({ onComplete }: { onComplete?: () => void }
     }
     setRightSparkles(rightS);
 
-    // Create confetti for left popper
+    // Create confetti for left popper - MORE confetti!
     const leftC: ConfettiPiece[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < confettiCount; i++) {
       leftC.push({
-        id: i,
+        id: Date.now() + 20000 + i,
         x: 10,
         y: 50,
         angle: -45 + Math.random() * 90, // Spread outward from left
@@ -71,11 +83,11 @@ export default function PartyPoppers({ onComplete }: { onComplete?: () => void }
     }
     setLeftConfetti(leftC);
 
-    // Create confetti for right popper
+    // Create confetti for right popper - MORE confetti!
     const rightC: ConfettiPiece[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < confettiCount; i++) {
       rightC.push({
-        id: i,
+        id: Date.now() + 30000 + i,
         x: 90,
         y: 50,
         angle: 135 + Math.random() * 90, // Spread outward from right
@@ -86,16 +98,32 @@ export default function PartyPoppers({ onComplete }: { onComplete?: () => void }
     }
     setRightConfetti(rightC);
 
+    // Keep active for longer for high intensity
+    const duration = intensity === 'high' ? 3000 : 2000;
+    
     // Callback after animation completes
     if (onComplete) {
       setTimeout(() => {
         setIsActive(false);
         onComplete();
-      }, 2000);
+      }, duration);
     } else {
-      setTimeout(() => setIsActive(false), 2000);
+      setTimeout(() => setIsActive(false), duration);
     }
-  }, [onComplete]);
+  }, [onComplete, intensity]);
+
+  useEffect(() => {
+    // Initial blast on mount
+    createBlast();
+  }, [createBlast]);
+
+  // Trigger new blast when trigger prop changes
+  useEffect(() => {
+    if (trigger !== undefined && trigger > 0) {
+      setIsActive(true);
+      createBlast();
+    }
+  }, [trigger, createBlast]);
 
   if (!isActive) return null;
 

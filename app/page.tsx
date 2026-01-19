@@ -11,13 +11,20 @@ import DecorativeImages from '@/components/DecorativeImages';
 import PartyPoppers from '@/components/PartyPoppers';
 import FloatingConfetti from '@/components/FloatingConfetti';
 import ContinuousSparks from '@/components/ContinuousSparks';
+import CenterBlast from '@/components/CenterBlast';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [showCake, setShowCake] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [partyPopperTrigger, setPartyPopperTrigger] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Handle cake click - trigger party popper blast
+  const handleCakeClick = () => {
+    setPartyPopperTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -66,6 +73,12 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
       {/* Step 1: Party Poppers - Blast on page load */}
       <PartyPoppers />
+      
+      {/* Clickable Party Poppers - Triggered by cake click */}
+      <PartyPoppers trigger={partyPopperTrigger} intensity="high" />
+      
+      {/* Center Blast from cake position */}
+      <CenterBlast trigger={partyPopperTrigger} />
 
       {/* Floating confetti in background - continuous subtle celebration */}
       <FloatingConfetti />
@@ -87,8 +100,12 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Step 3: 3D Cake Container - Enters from bottom with bounce after title */}
-        <div className={`w-full h-96 mb-8 rounded-lg shadow-2xl bg-white/30 backdrop-blur-sm p-4 ${showCake ? 'cake-entrance' : 'opacity-0 translate-y-32'}`}>
+        {/* Step 3: 3D Cake Container - Enters from bottom with bounce after title - CLICKABLE! */}
+        <div 
+          className={`w-full h-96 mb-8 rounded-lg shadow-2xl bg-white/30 backdrop-blur-sm p-4 cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 ${showCake ? 'cake-entrance' : 'opacity-0 translate-y-32'}`}
+          onClick={handleCakeClick}
+          title="Click for celebration! 🎉"
+        >
           <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-gray-600">Loading cake...</div>}>
             <Canvas>
               <PerspectiveCamera makeDefault position={[0, 2, 5]} fov={50} />
@@ -103,6 +120,12 @@ export default function Home() {
               <BirthdayCake />
             </Canvas>
           </Suspense>
+          {/* Click hint */}
+          {showCake && (
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 bg-white/80 px-3 py-1 rounded-full animate-pulse">
+              Click the cake! 🎂
+            </div>
+          )}
         </div>
 
         {/* Step 4: Message Card and Content - Fade in after cake */}
