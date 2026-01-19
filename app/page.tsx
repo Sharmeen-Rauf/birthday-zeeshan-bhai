@@ -6,6 +6,8 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import BirthdayCake from '@/components/BirthdayCake';
 import Confetti from '@/components/Confetti';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
+import ImageGallery from '@/components/ImageGallery';
+import DecorativeImages from '@/components/DecorativeImages';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -17,6 +19,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
       <Confetti />
+      <DecorativeImages />
       
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-90" />
@@ -73,6 +76,9 @@ export default function Home() {
             </p>
           </div>
         </div>
+
+        {/* Image Gallery */}
+        <ImageGallery />
 
         {/* QR Code Section */}
         {mounted && <QRCodeDisplay />}

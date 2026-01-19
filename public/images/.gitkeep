@@ -1,0 +1,5 @@
+# Add your images here!
+# Supported formats: .jpg, .jpeg, .png, .webp
+# 
+# After adding images, update components/ImageGallery.tsx
+# and add your image paths to the IMAGE_PATHS array
