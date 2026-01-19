@@ -10,6 +10,7 @@ import ImageGallery from '@/components/ImageGallery';
 import DecorativeImages from '@/components/DecorativeImages';
 import PartyPoppers from '@/components/PartyPoppers';
 import FloatingConfetti from '@/components/FloatingConfetti';
+import ContinuousSparks from '@/components/ContinuousSparks';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -68,6 +69,9 @@ export default function Home() {
 
       {/* Floating confetti in background - continuous subtle celebration */}
       <FloatingConfetti />
+      
+      {/* Continuous sparks for magical effect */}
+      <ContinuousSparks />
       
       <DecorativeImages />
       
