@@ -12,6 +12,11 @@ import PartyPoppers from '@/components/PartyPoppers';
 import FloatingConfetti from '@/components/FloatingConfetti';
 import ContinuousSparks from '@/components/ContinuousSparks';
 import CenterBlast from '@/components/CenterBlast';
+import MouseTrail from '@/components/MouseTrail';
+import InteractiveStars from '@/components/InteractiveStars';
+import MakeAWish from '@/components/MakeAWish';
+import Fireworks from '@/components/Fireworks';
+import TypewriterMessage from '@/components/TypewriterMessage';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -19,11 +24,19 @@ export default function Home() {
   const [showCake, setShowCake] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [partyPopperTrigger, setPartyPopperTrigger] = useState(0);
+  const [fireworkTrigger, setFireworkTrigger] = useState(0);
+  const [showSpecialMessage, setShowSpecialMessage] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Handle cake click - trigger party popper blast
   const handleCakeClick = () => {
     setPartyPopperTrigger(prev => prev + 1);
+  };
+
+  // Handle wish made - trigger fireworks
+  const handleWishMade = () => {
+    setFireworkTrigger(prev => prev + 1);
+    setShowSpecialMessage(true);
   };
 
   useEffect(() => {
@@ -86,6 +99,11 @@ export default function Home() {
       {/* Continuous sparks for magical effect */}
       <ContinuousSparks />
       
+      {/* Unique interactive features */}
+      <MouseTrail />
+      <InteractiveStars />
+      <Fireworks trigger={fireworkTrigger} />
+      
       <DecorativeImages />
       
       {/* Background gradient overlay */}
@@ -102,7 +120,7 @@ export default function Home() {
 
         {/* Step 3: 3D Cake Container - Enters from bottom with bounce after title - CLICKABLE! */}
         <div 
-          className={`w-full h-96 mb-8 rounded-lg shadow-2xl bg-white/30 backdrop-blur-sm p-4 cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 ${showCake ? 'cake-entrance' : 'opacity-0 translate-y-32'}`}
+          className={`w-full h-96 mb-8 rounded-lg shadow-2xl bg-white/30 backdrop-blur-sm p-4 cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 relative ${showCake ? 'cake-entrance' : 'opacity-0 translate-y-32'}`}
           onClick={handleCakeClick}
           title="Click for celebration! 🎉"
         >
@@ -120,6 +138,12 @@ export default function Home() {
               <BirthdayCake />
             </Canvas>
           </Suspense>
+          
+          {/* Make a Wish Feature */}
+          {showCake && (
+            <MakeAWish onWishMade={handleWishMade} />
+          )}
+          
           {/* Click hint */}
           {showCake && (
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 bg-white/80 px-3 py-1 rounded-full animate-pulse">
@@ -127,6 +151,20 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Special Message after wish */}
+        {showSpecialMessage && (
+          <div className="mb-8 text-center animate-fadeIn">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl shadow-2xl inline-block">
+              <p className="text-2xl md:text-3xl font-bold">
+                <TypewriterMessage 
+                  text="🌟 Your wish has been heard! May all your dreams come true! 🌟"
+                  speed={80}
+                />
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Step 4: Message Card and Content - Fade in after cake */}
         <div className={`transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
